@@ -3,8 +3,8 @@ mkdir $BULLETSIM_BUILD_DIR
 
 mkdir $BULLETSIM_BUILD_DIR/debug
 cd $BULLETSIM_BUILD_DIR/debug
-cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug $BULLETSIM_SOURCE_DIR
+cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=OFF $BULLETSIM_SOURCE_DIR
 
 mkdir $BULLETSIM_BUILD_DIR/release
 cd $BULLETSIM_BUILD_DIR/release
-cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release $BULLETSIM_SOURCE_DIR
+cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF $BULLETSIM_SOURCE_DIR

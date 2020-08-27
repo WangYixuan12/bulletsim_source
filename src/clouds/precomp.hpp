@@ -54,7 +54,7 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/imgproc/imgproc_c.h"
-#include "opencv2/core/internal.hpp"
+#include "opencv2/core/core.hpp"
 #include <math.h>
 #include <assert.h>
 #include <string.h>
@@ -132,28 +132,28 @@ void icvSepConvSmall3_32f( float* src, int src_step, float* dst, int dst_step,
 #undef   CV_CALC_MAX
 #define  CV_CALC_MAX(a, b) if((a) < (b)) (a) = (b)
 
-CvStatus CV_STDCALL
+CVStatus CV_STDCALL
 icvCopyReplicateBorder_8u( const uchar* src, int srcstep, CvSize srcroi,
                            uchar* dst, int dststep, CvSize dstroi,
                            int left, int right, int cn, const uchar* value = 0 );
 
-CvStatus CV_STDCALL icvGetRectSubPix_8u_C1R
+CVStatus CV_STDCALL icvGetRectSubPix_8u_C1R
 ( const uchar* src, int src_step, CvSize src_size,
   uchar* dst, int dst_step, CvSize win_size, CvPoint2D32f center );
-CvStatus CV_STDCALL icvGetRectSubPix_8u32f_C1R
+CVStatus CV_STDCALL icvGetRectSubPix_8u32f_C1R
 ( const uchar* src, int src_step, CvSize src_size,
   float* dst, int dst_step, CvSize win_size, CvPoint2D32f center );
-CvStatus CV_STDCALL icvGetRectSubPix_32f_C1R
+CVStatus CV_STDCALL icvGetRectSubPix_32f_C1R
 ( const float* src, int src_step, CvSize src_size,
   float* dst, int dst_step, CvSize win_size, CvPoint2D32f center );
 
-CvStatus CV_STDCALL icvGetQuadrangleSubPix_8u_C1R
+CVStatus CV_STDCALL icvGetQuadrangleSubPix_8u_C1R
 ( const uchar* src, int src_step, CvSize src_size,
   uchar* dst, int dst_step, CvSize win_size, const float *matrix );
-CvStatus CV_STDCALL icvGetQuadrangleSubPix_8u32f_C1R
+CVStatus CV_STDCALL icvGetQuadrangleSubPix_8u32f_C1R
 ( const uchar* src, int src_step, CvSize src_size,
   float* dst, int dst_step, CvSize win_size, const float *matrix );
-CvStatus CV_STDCALL icvGetQuadrangleSubPix_32f_C1R
+CVStatus CV_STDCALL icvGetQuadrangleSubPix_32f_C1R
 ( const float* src, int src_step, CvSize src_size,
   float* dst, int dst_step, CvSize win_size, const float *matrix );
 

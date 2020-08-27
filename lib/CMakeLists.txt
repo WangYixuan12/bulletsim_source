@@ -6,5 +6,5 @@ add_subdirectory(osgWorks-3.0)
 add_subdirectory(osgBullet-3.0)
 add_subdirectory(json)
 add_subdirectory(tetgen-1.4.3)
-add_subdirectory(log4cplus-1.1.0-rc3)
+add_subdirectory(log4cplus-REL_1_2_2)
 

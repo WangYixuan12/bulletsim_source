@@ -96,9 +96,9 @@ void syncAndRegCloudJoint(std::string cloud_topic, ros::NodeHandle nh, CloudAndJ
   jointSubs.push_back(jointSub);
 
   typedef message_filters::Synchronizer<MySyncPolicy> Dogshit;
-  shared_ptr<Dogshit> sync(new Dogshit(MySyncPolicy(100), *cloudSub, *jointSub));
+  std::shared_ptr<Dogshit> sync(new Dogshit(MySyncPolicy(100), *cloudSub, *jointSub));
   sync->registerCallback(boost::bind(callback, _1, _2));
-  static vector< shared_ptr<Dogshit> > syncs;
+  static std::vector< std::shared_ptr<Dogshit> > syncs;
   syncs.push_back(sync);
 
 

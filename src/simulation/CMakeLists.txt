@@ -5,6 +5,8 @@ include_directories(
   ${BULLETSIM_SOURCE_DIR}/src
   ${PCL_INCLUDE_DIRS}
   ${TETGEN_DIR}
+  ${OSG_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 )
 
 add_library(simulation

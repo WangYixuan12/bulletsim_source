@@ -1,5 +1,7 @@
 include_directories(${OSG_INCLUDE_DIRS} ${OSGWORKS_DIR})
 
+message(STATUS "for osg works: ${OSG_INCLUDE_DIRS}")
+
 set(OSGWORKS_SOURCES
     osgwQuery/QueryStats.cpp
     osgwQuery/QueryObject.cpp
