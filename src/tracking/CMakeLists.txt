@@ -7,7 +7,7 @@ include_directories(
   ${PCL_INCLUDE_DIRS}
   ${TETGEN_DIR}
   ${ROS_ROOT_DIR}/include
-  /home/chicheng/ARMLab/cpd_ws/devel/include
+  ${catkin_INCLUDE_DIRS}
 )
 
 link_directories(

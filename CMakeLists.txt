@@ -30,7 +30,7 @@ find_package(OpenCV REQUIRED)
 message(${OpenCV_INCLUDE_DIRS})
 message(${EIGEN3_INCLUDE_DIR})
 
-set(ROS_ROOT_DIR /opt/ros/kinetic)
+set(ROS_ROOT_DIR /opt/ros/melodic)
 find_package(catkin REQUIRED COMPONENTS
  sensor_msgs geometry_msgs std_msgs roscpp rosconsole message_filters cpp_common rostime roscpp_traits roscpp_serialization
  bulletsim_msgs
