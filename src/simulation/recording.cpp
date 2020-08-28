@@ -84,7 +84,7 @@ ScreenThreadRecorder::ScreenThreadRecorder(osgViewer::Viewer& viewer) :
 		m_exit_loop(false)
 {
 	string full_filename = RecordingConfig::dir + "/" +  RecordingConfig::video_file + ".avi";
-	m_video_writer.open(full_filename,  CV_FOURCC('P','I','M','1'), RecordingConfig::frame_rate, cv::Size(ViewerConfig::windowWidth, ViewerConfig::windowHeight));
+	m_video_writer.open(full_filename,  cv::VideoWriter::fourcc('P','I','M','1'), RecordingConfig::frame_rate, cv::Size(ViewerConfig::windowWidth, ViewerConfig::windowHeight));
 
 	if (!m_video_writer.isOpened()) {
 		runtime_error("Video destination file " + full_filename + " doesn't exits.");
@@ -97,7 +97,7 @@ ScreenThreadRecorder::ScreenThreadRecorder(osgViewer::Viewer& viewer, std::strin
 		m_capture(ScreenCapture(viewer)),
 		m_exit_loop(false)
 {
-	m_video_writer.open(full_filename,  CV_FOURCC('P','I','M','1'), RecordingConfig::frame_rate, cv::Size(ViewerConfig::windowWidth, ViewerConfig::windowHeight));
+	m_video_writer.open(full_filename,  cv::VideoWriter::fourcc('P','I','M','1'), RecordingConfig::frame_rate, cv::Size(ViewerConfig::windowWidth, ViewerConfig::windowHeight));
 
 	if (!m_video_writer.isOpened()) {
 		runtime_error("Video destination file " + full_filename + " doesn't exits.");

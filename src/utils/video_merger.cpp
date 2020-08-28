@@ -35,15 +35,15 @@ int main(int argc, char* argv[]) {
   	if (!video_captures[i].isOpened())
  			runtime_error("Video input file " + VideoMergerConfig::inputFiles[i] + " doesn't exits.");
 
-  	if (i==0) out_frame_count = video_captures[i].get(CV_CAP_PROP_FRAME_COUNT);
-  	else out_frame_count = min(out_frame_count, (int) video_captures[i].get(CV_CAP_PROP_FRAME_COUNT));
-  	out_frame_width += video_captures[i].get(CV_CAP_PROP_FRAME_WIDTH);
+  	if (i==0) out_frame_count = video_captures[i].get(cv::CAP_PROP_FRAME_COUNT);
+  	else out_frame_count = min(out_frame_count, (int) video_captures[i].get(cv::CAP_PROP_FRAME_COUNT));
+  	out_frame_width += video_captures[i].get(cv::CAP_PROP_FRAME_WIDTH);
   }
 
   // assumes height and fps are the same for all the input images
-	int out_frame_height = video_captures[0].get(CV_CAP_PROP_FRAME_HEIGHT);
-	double out_fps = video_captures[0].get(CV_CAP_PROP_FPS);
-	int out_codec = video_captures[0].get(CV_CAP_PROP_FOURCC);
+	int out_frame_height = video_captures[0].get(cv::CAP_PROP_FRAME_HEIGHT);
+	double out_fps = video_captures[0].get(cv::CAP_PROP_FPS);
+	int out_codec = video_captures[0].get(cv::CAP_PROP_FOURCC);
 
   cv::VideoWriter video_writer(VideoMergerConfig::outputFile, out_codec, out_fps, cv::Size(out_frame_width, out_frame_height));
   if (!video_writer.isOpened())

@@ -115,9 +115,10 @@ file(WRITE ${DEFINES_HXX_CMAKE} ${FILE_BUFFER})
 
 configure_file(${DEFINES_HXX_CMAKE} ${DEFINES_HXX} @ONLY)
 
-include_directories (${log4cplus_SOURCE_DIR}/include
-                     ${log4cplus_BINARY_DIR}/include
-                    )
+# include_directories (${log4cplus_SOURCE_DIR}/include
+#                      ${log4cplus_BINARY_DIR}/include
+#                     )
+include_directories(${LOG4CPLUS_INCLUDE_DIRS})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
