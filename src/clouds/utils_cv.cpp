@@ -205,7 +205,7 @@ cv::Mat skinMask(cv::Mat src) {
 
 void extractImageAndMask(cv::Mat image_and_mask, cv::Mat& image, cv::Mat& mask) {
 	vector<cv::Mat> channels;
-	cv::split(image_and_mask, channels);
+	cv::split(image_and_mask, channels); cout << "channel size: " << channels.size() << endl;
 	mask = channels[3];
 	channels.pop_back();
 	cv::merge(channels, image);

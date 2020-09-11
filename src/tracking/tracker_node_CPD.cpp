@@ -82,6 +82,21 @@ string type2str(int type) {
     return r;
 }
 
+void colorSeg(const cv::Mat& rgb_image, cv::Mat& mask) {
+	// Red
+    cv::Mat rgb_f;
+    rgb_image.convertTo(rgb_f, CV_32FC3);
+    rgb_f /= 255.0; // get RGB 0.0-1.0
+    cv::Mat color_hsv;
+    cv::cvtColor(rgb_f, color_hsv, CV_RGB2HSV);
+	
+	cv::Mat mask1;
+    cv::Mat mask2;
+    cv::inRange(color_hsv, cv::Scalar(0, 0.2, 0.2), cv::Scalar(20, 1.0, 1.0), mask1);
+    cv::inRange(color_hsv, cv::Scalar(340, 0.2, 0.2), cv::Scalar(360, 1.0, 1.0), mask2);
+    cv::bitwise_or(mask1, mask2, mask);
+}
+
 void callback(const vector<sensor_msgs::PointCloud2ConstPtr>& cloud_msg, const vector<sensor_msgs::ImageConstPtr>& image_msgs) {
 	if (rgb_images.size()!=nCameras) rgb_images.resize(nCameras);
 	if (mask_images.size()!=nCameras) mask_images.resize(nCameras);
@@ -90,9 +105,12 @@ void callback(const vector<sensor_msgs::PointCloud2ConstPtr>& cloud_msg, const v
 	assert(image_msgs.size() == 2*nCameras);
 	for (int i=0; i<nCameras; i++) {
 		// merge all the clouds progressively
+		cout << "93" << endl;
 		ColorCloudPtr cloud(new ColorCloud);
 		pcl::fromROSMsg(*cloud_msg[i], *cloud);
+		cout << "96" << endl;
 		pcl::transformPointCloud(*cloud, *cloud, transformers[i]->worldFromCamEigen);
+		cout << "98" << endl;
 
 		if (i==0) *filteredCloud = *cloud;
 		else *filteredCloud = *filteredCloud + *cloud;
@@ -109,11 +127,13 @@ void callback(const vector<sensor_msgs::PointCloud2ConstPtr>& cloud_msg, const v
 //            std::cout << i << std::endl;
 //        }
 
-		depth_images[i] = cv_bridge::toCvCopy(image_msgs[2*i])->image;
+		depth_images[i] = cv_bridge::toCvCopy(image_msgs[2*i], sensor_msgs::image_encodings::TYPE_32FC1)->image;
 //        std::cout << type2str(depth_images[i].type()) << depth_images[i].rows << ' ' << depth_images[i].cols << std::endl;
-        boost::shared_ptr<cv_bridge::CvImage> debug_image_ptr = cv_bridge::toCvCopy(image_msgs[2*i+1]);
-		extractImageAndMask(debug_image_ptr->image, rgb_images[i], mask_images[i]);
-
+        // boost::shared_ptr<cv_bridge::CvImage> debug_image_ptr = cv_bridge::toCvCopy(image_msgs[2*i+1], sensor_msgs::image_encodings::TYPE_8UC3);
+		cout << "mask image size: " << mask_images.size() << endl;
+		// extractImageAndMask(debug_image_ptr->image, rgb_images[i], mask_images[i]);
+		rgb_images[i] = cv_bridge::toCvCopy(image_msgs[2*i+1], sensor_msgs::image_encodings::TYPE_8UC3)->image;
+		colorSeg(rgb_images[i], mask_images[i]);
 	}
 
 	if (firstCallback) {
@@ -143,26 +163,24 @@ int main(int argc, char* argv[]) {
 	parser.read(argc, argv);
 
 	nCameras = TrackingConfig::cameraTopics.size();
-
 	ros::init(argc, argv,"tracker_node");
 	ros::NodeHandle nh;
 
 	listener = new tf::TransformListener();
-
 	for (int i=0; i<nCameras; i++){
 		std::cout << TrackingConfig::cameraTopics[i] << std::endl;
 		transformers.push_back(new CoordinateTransformer(waitForAndGetTransform(*listener, "/ground", TrackingConfig::cameraTopics[i]+"_rgb_optical_frame")));
 	}
-
+	
 	vector<string> cloud_topics;
 	vector<string> image_topics;
 	for (int i=0; i<nCameras; i++) {
-		cloud_topics.push_back("/preprocessor" + TrackingConfig::cameraTopics[i] + "/points");
-		image_topics.push_back("/preprocessor" + TrackingConfig::cameraTopics[i] + "/image");
-		image_topics.push_back("/preprocessor" + TrackingConfig::cameraTopics[i] + "/depth");
+		cloud_topics.push_back("point_clouds");
+		image_topics.push_back("image_color_rect");
+		image_topics.push_back("image_depth_rect");
 	}
 	synchronizeAndRegisterCallback(cloud_topics, image_topics, nh, callback);
-
+	
 	ros::Publisher objPub = nh.advertise<bulletsim_msgs::TrackedObject>(trackedObjectTopic,10);
 
 	// wait for first message, then initialize
@@ -171,7 +189,7 @@ int main(int argc, char* argv[]) {
 		sleep(.001);
 		if (!ros::ok()) throw runtime_error("caught signal while waiting for first message");
 	}
-
+	cout << "172" << endl;
 	// set up scene
 	Scene scene;
 	util::setGlobalEnv(scene.env);
@@ -208,7 +226,7 @@ int main(int argc, char* argv[]) {
 	trackedObj->init();
 	scene.env->add(trackedObj->m_sim);
 
-
+	cout << "209" << endl;
 	// actual tracking algorithm
 	MultiVisibility::Ptr visInterface(new MultiVisibility());
 	for (int i=0; i<nCameras; i++) {

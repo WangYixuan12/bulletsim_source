@@ -61,7 +61,14 @@ def handle_initialization_request(req):
         poly_pub.publish(resp.objectInit.towel_corners)
     
     if obj_type == "rope":
-        total_path_3d = find_path_through_point_cloud(xyz, plotting=args.plotting)            
+        # import open3d
+        # pcd = open3d.geometry.PointCloud()
+        # pcd.points = open3d.utility.Vector3dVector(xyz)
+        # open3d.visualization.draw_geometries([pcd])
+
+        # print(xyz.shape)
+        
+        total_path_3d = find_path_through_point_cloud(xyz, plotting=args.plotting)
         resp = bs.InitializationResponse()
         resp.objectInit.type = "rope"
         rope = resp.objectInit.rope = bm.Rope()

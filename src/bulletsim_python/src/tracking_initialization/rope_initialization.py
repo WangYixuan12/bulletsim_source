@@ -26,7 +26,7 @@ def find_path_through_point_cloud(xyzs, plotting = False):
         mlab.figure(3); mlab.clf()
         plot_graph_3d(S)
 
-
+    cout << "29 in rope_init.py" << endl;
     segs3d = [np.array([S.node[i]["xyz"] for i in seg]) for seg in segs]
 
     if plotting: plot_paths_2d(segs3d)
@@ -36,7 +36,7 @@ def find_path_through_point_cloud(xyzs, plotting = False):
 
     (score, nodes) = longest_path_through_segment_graph(PG)
     print nodes
-
+    cout << "39 in rope_init.py" << endl;
     total_path = []
     for node in nodes[::2]:
         if node%2 == 0: total_path.extend(segs[node//2])
@@ -47,7 +47,7 @@ def find_path_through_point_cloud(xyzs, plotting = False):
     total_path_3d = unif_resample(total_path_3d, seg_len=.02, tol=.003) # tolerance of 1mm
 #    total_path_3d = unif_resample(total_path_3d, seg_len=.02, tol=.003) # tolerance of 1mm
 
-
+    cout << "50 in rope_init.py" << endl;
     if plotting:
         mlab.figure(2); mlab.clf()
         for seg in segs3d:
@@ -156,7 +156,7 @@ def skeletonize_point_cloud(xyzs, point_conn_dist = .025, cluster_size = .04):
     return S
         
 def calc_distances(G):
-    node0 = G.nodes_iter().next()
+    node0 = G.nodes().next()
     G.node[node0]["dist"] = 0
     frontier = deque([node0])
     
