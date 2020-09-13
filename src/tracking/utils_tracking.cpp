@@ -19,8 +19,12 @@ CoordinateTransformer::CoordinateTransformer() {}
 CoordinateTransformer::CoordinateTransformer(const btTransform& wfc) { reset(wfc); }
 
 void CoordinateTransformer::reset(const btTransform &wfc) {
+  GeneralConfig::scale = 1.0;
   worldFromCamUnscaled = wfc;
   worldFromCamEigen = Scaling3f(GeneralConfig::scale)*toEigenTransform(wfc);
+  std::cout << toEigenTransform(wfc).matrix() << std::endl;
+  std::cout << GeneralConfig::scale << std::endl;
+  std::cout << worldFromCamEigen.matrix() << std::endl;
   camFromWorldUnscaled = wfc.inverse();
   camFromWorldEigen = worldFromCamEigen.inverse();
 }

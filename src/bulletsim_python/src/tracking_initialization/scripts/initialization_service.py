@@ -66,7 +66,7 @@ def handle_initialization_request(req):
         # pcd.points = open3d.utility.Vector3dVector(xyz)
         # open3d.visualization.draw_geometries([pcd])
 
-        # print(xyz.shape)
+        print(xyz)
         
         total_path_3d = find_path_through_point_cloud(xyz, plotting=args.plotting)
         resp = bs.InitializationResponse()

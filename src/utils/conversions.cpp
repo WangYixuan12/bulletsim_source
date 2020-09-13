@@ -116,7 +116,8 @@ btTransform toBulletTransform(const tf::StampedTransform& in) {
 	btTransform out;
 	tf::Vector3 origin = in.getOrigin();
 	tf::Quaternion rotation = in.getRotation();
-
+	std::cout << "origin: " << origin.x() << " " << origin.y() << " " << origin.z() << std::endl;
+	std::cout << "quaternion: " << rotation.x() << " " << rotation.y() << " " << rotation.z() << " " << rotation.w() << std::endl;
 	out.setOrigin(btVector3(origin.x(), origin.y(), origin.z()));
 	out.setRotation(btQuaternion(rotation.x(), rotation.y(),rotation.z(),rotation.w() ));
 	return out;
@@ -136,6 +137,7 @@ tf::Transform toTFTransform(const btTransform& in) {
 Eigen::Affine3f toEigenTransform(const btTransform& transform) {
   Eigen::Affine3f t;
   transform.getOpenGLMatrix(t.data());
+  // std::cout << t.matrix() << std::endl;
   return t;
 
 //	btVector3 transBullet = transform.getOrigin();

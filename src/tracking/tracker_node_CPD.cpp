@@ -105,12 +105,13 @@ void callback(const vector<sensor_msgs::PointCloud2ConstPtr>& cloud_msg, const v
 	assert(image_msgs.size() == 2*nCameras);
 	for (int i=0; i<nCameras; i++) {
 		// merge all the clouds progressively
-		cout << "93" << endl;
 		ColorCloudPtr cloud(new ColorCloud);
 		pcl::fromROSMsg(*cloud_msg[i], *cloud);
-		cout << "96" << endl;
+		// cout << "cloud:" << endl;
+		// cout << cloud->getMatrixXfMap() << endl;
+		cout << "transform matrix" << endl;
+		cout << (transformers[i]->worldFromCamEigen).matrix() << endl;
 		pcl::transformPointCloud(*cloud, *cloud, transformers[i]->worldFromCamEigen);
-		cout << "98" << endl;
 
 		if (i==0) *filteredCloud = *cloud;
 		else *filteredCloud = *filteredCloud + *cloud;
@@ -130,7 +131,7 @@ void callback(const vector<sensor_msgs::PointCloud2ConstPtr>& cloud_msg, const v
 		depth_images[i] = cv_bridge::toCvCopy(image_msgs[2*i], sensor_msgs::image_encodings::TYPE_32FC1)->image;
 //        std::cout << type2str(depth_images[i].type()) << depth_images[i].rows << ' ' << depth_images[i].cols << std::endl;
         // boost::shared_ptr<cv_bridge::CvImage> debug_image_ptr = cv_bridge::toCvCopy(image_msgs[2*i+1], sensor_msgs::image_encodings::TYPE_8UC3);
-		cout << "mask image size: " << mask_images.size() << endl;
+		// cout << "mask image size: " << mask_images.size() << endl;
 		// extractImageAndMask(debug_image_ptr->image, rgb_images[i], mask_images[i]);
 		rgb_images[i] = cv_bridge::toCvCopy(image_msgs[2*i+1], sensor_msgs::image_encodings::TYPE_8UC3)->image;
 		colorSeg(rgb_images[i], mask_images[i]);
@@ -144,6 +145,20 @@ void callback(const vector<sensor_msgs::PointCloud2ConstPtr>& cloud_msg, const v
 	}
 	//filteredCloud = filterZ(filteredCloud, -0.1*METERS, 0.20*METERS);
 	pending = true;
+}
+
+void TrackedObject2Eigen(const TrackedObject::Ptr trackedobj, int frame) {
+	std::string workingDir = "/home/deformtrack/catkin_ws/src/cdcpd_test_blender/result/cpd_physics/";
+	std::vector<btVector3> ropeVec = (trackedobj->getPoints());
+	unsigned size = ropeVec.size();
+	Eigen::Matrix3Xf rope(3, size);
+	for (int node = 0; node < size; node++) {
+		rope(0, node) = ropeVec[node].x();
+		rope(1, node) = ropeVec[node].y();
+		rope(2, node) = ropeVec[node].z();
+	}
+	ofstream outputFile(workingDir + "result" + to_string(frame) + ".txt");
+	outputFile << rope << endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -189,7 +204,6 @@ int main(int argc, char* argv[]) {
 		sleep(.001);
 		if (!ros::ok()) throw runtime_error("caught signal while waiting for first message");
 	}
-	cout << "172" << endl;
 	// set up scene
 	Scene scene;
 	util::setGlobalEnv(scene.env);
@@ -220,13 +234,13 @@ int main(int argc, char* argv[]) {
     	ViewerConfig::cameraHomeUp = btVector3(1,0,0);
     }
 	scene.startViewer();
-
+	cout << "filtered cloud:" << endl;
+	cout << filteredCloud->getMatrixXfMap() << endl;
 	TrackedObject::Ptr trackedObj = callInitServiceAndCreateObject(filteredCloud, rgb_images[0], mask_images[0], transformers[0]);
 	if (!trackedObj) throw runtime_error("initialization of object failed.");
 	trackedObj->init();
 	scene.env->add(trackedObj->m_sim);
 
-	cout << "209" << endl;
 	// actual tracking algorithm
 	MultiVisibility::Ptr visInterface(new MultiVisibility());
 	for (int i=0; i<nCameras; i++) {
@@ -259,7 +273,7 @@ int main(int argc, char* argv[]) {
 
 	scene.setSyncTime(false);
 	scene.setDrawing(true);
-
+	int frame = 0;
 	while (!exit_loop && ros::ok()) {
 		//Update the inputs of the featureExtractors and visibilities (if they have any inputs)
 		cloudFeatures->updateInputs(filteredCloud, rgb_images[0], transformers[0]);
@@ -282,6 +296,8 @@ int main(int argc, char* argv[]) {
 			ros::spinOnce();
 		}
 		objPub.publish(toTrackedObjectMessage(trackedObj));
+		TrackedObject2Eigen(trackedObj, frame);
+		frame++;
 	}
 
 //	while (!exit_loop && ros::ok()) {
